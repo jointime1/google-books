@@ -12,20 +12,29 @@ export const Main = observer((props: Props) => {
 	const books = myStore.books;
 
 	return (
-		<div>
-			<div className="text-center">Found {myStore.amount} result</div>
+		<div className="p-3">
+			<div className="text-center mb-4">Found {myStore.amount} result</div>
 			{myStore.loader ? (
 				<div className="flex justify-center">
 					<BeatLoader loading />
 				</div>
 			) : (
-				<div className="grid grid-cols-4 gap-3">
+				<div className="grid grid-cols-4 gap-3 md:grid-cols-2">
 					{books.map((book) => (
 						<Card key={book.id} {...book} />
 					))}
 				</div>
 			)}
-			<button onClick={myStore.findMoreBooks}>Load more</button>
+			<div className="w-full flex justify-center py-4">
+				{books.length !== myStore.amount && (
+					<button
+						className="rounded-md ring-2 ring-blue-500 bg-stone-400 p-2 text-white "
+						onClick={myStore.findMoreBooks}
+					>
+						Load more
+					</button>
+				)}
+			</div>
 		</div>
 	);
 });

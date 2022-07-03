@@ -1,6 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import axios from "axios";
-import { title } from "process";
 
 import { Book, Items } from "../types/items";
 class Store {
@@ -12,6 +11,8 @@ class Store {
 	sortBy = "relevance";
 	printType = "all";
 	startIndex = 0;
+	isChosen = false;
+	idBook = "";
 	constructor() {
 		makeAutoObservable(this);
 	}
@@ -22,13 +23,16 @@ class Store {
 				`https://www.googleapis.com/books/v1/volumes?q=${this.value}&orderBy=${this.sortBy}&printType=${this.printType}&maxResults=20&startIndex=${this.startIndex}&key=${this.key}`
 			)
 			.then((result) => {
-				this.amount = result.data.totalItems;
-				this.books = [...this.books, ...result.data.items];
-				this.books.map((book) => console.log(book.id));
+				runInAction(() => {
+					this.amount = result.data.totalItems;
+					this.books = result.data.items;
+				});
 			})
 			.finally(() => {
 				setTimeout(() => {
-					this.loader = false;
+					runInAction(() => {
+						this.loader = false;
+					});
 				}, 1000);
 			});
 	};
@@ -37,13 +41,42 @@ class Store {
 	}
 	changeType(text: string) {
 		this.printType = text;
+		this.books = [];
+		this.findBooks();
 	}
 	changeSort(text: string) {
 		this.sortBy = text;
+		this.books = [];
+		this.findBooks();
+	}
+	setIsChosen() {
+		this.isChosen = true;
+	}
+	setId(id: string) {
+		this.idBook = id;
 	}
 	findMoreBooks = () => {
 		this.startIndex = this.startIndex + 20;
-		this.findBooks();
+		runInAction(() => {
+			this.loader = true;
+			axios
+				.get<Items>(
+					`https://www.googleapis.com/books/v1/volumes?q=${this.value}&orderBy=${this.sortBy}&printType=${this.printType}&maxResults=20&startIndex=${this.startIndex}&key=${this.key}`
+				)
+				.then((result) => {
+					runInAction(() => {
+						this.amount = result.data.totalItems;
+						this.books = this.books.concat(result.data.items);
+					});
+				})
+				.finally(() => {
+					setTimeout(() => {
+						runInAction(() => {
+							this.loader = false;
+						});
+					}, 1000);
+				});
+		});
 	};
 }
 

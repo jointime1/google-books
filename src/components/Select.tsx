@@ -2,15 +2,24 @@ import React from "react";
 import { myStore } from "../store/Store";
 type Props = {
 	name: string;
+	options: string[];
 };
 
-export const Select = ({ name }: Props) => {
+export const Select = ({ name, options }: Props) => {
 	return (
-		<div className="flex">
+		<div className="flex items-center whitespace-nowrap gap-2 justify-center">
 			<label htmlFor="select">{name}</label>
 			<select
+				defaultValue={options[0]}
+				onChange={(e) => {
+					options.length > 2
+						? myStore.changeType(e.target.value)
+						: myStore.changeSort(e.target.value);
+				}}
 				id="select"
 				className="form-select appearance-none
+				md:max-w-[45%]
+				
     block
     w-full
     px-3
@@ -27,22 +36,11 @@ export const Select = ({ name }: Props) => {
     focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
 				aria-label="Default select example"
 			>
-				{name === "Categories" ? (
-					<>
-						<option selected>all</option>
-						<option value="1">art</option>
-						<option value="2">biography</option>
-						<option value="3">computers</option>
-						<option value="4">history</option>
-						<option value="5">medical</option>
-						<option value="6">poetry</option>
-					</>
-				) : (
-					<>
-						<option selected>relevance</option>
-						<option value="1">newest</option>
-					</>
-				)}
+				{options.map((option) => (
+					<option key={option} value={option}>
+						{option}
+					</option>
+				))}
 			</select>
 		</div>
 	);
