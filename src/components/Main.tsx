@@ -1,16 +1,20 @@
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useState } from "react";
-import { Triangle } from "react-loader-spinner";
 import { BeatLoader } from "react-spinners";
 import { myStore } from "../store/Store";
 import { Card } from "./Card";
 
-type Props = {};
-
-export const Main = observer((props: Props) => {
+export const Main = observer(() => {
 	const books = myStore.books;
-
+	const idBooks = new Set(books.map((book) => book.id));
+	// sometimes google gives me 2 or same books, so i need to filter
+	books.filter((book) => {
+		if (idBooks.has(book.id)) {
+			idBooks.delete(book.id);
+			return true;
+		} else {
+			return false;
+		}
+	});
 	return (
 		<div className="p-3">
 			<div className="text-center mb-4">Found {myStore.amount} result</div>

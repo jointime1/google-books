@@ -1,4 +1,3 @@
-import React from "react";
 import { ImageLinks } from "../types/items";
 import close from "../assets/close.svg";
 import { myStore } from "../store/Store";

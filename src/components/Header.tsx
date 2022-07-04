@@ -1,12 +1,7 @@
-import axios from "axios";
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useEffect } from "react";
 import { myStore } from "../store/Store";
-import { Card } from "./Card";
 import { Select } from "./Select";
 import finder from "../assets/finder.svg";
-type Props = {};
 
 const categories = [
 	"all",
